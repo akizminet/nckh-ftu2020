@@ -1,0 +1,181 @@
+library(data.table)
+
+san <- fread("dulieuCT.csv",header=TRUE,select = 1,stringsAsFactors = FALSE)
+#names(san) <- c("TICKER","BOARD")
+tickers <- sort(unique(san$TICKER))
+tickers <- append(tickers,"^VNINDEX")
+cophieu68 <- fread("amibroker_all_data.csv", select=c(1,2,6))
+cophieu68[,VOLUME:=fread("amibroker_all_data.csv", select=7)]
+hsx <- cophieu68[
+  `<Ticker>` %in% tickers & 
+  `<DTYYYYMMDD>`>20081231 & 
+  `<DTYYYYMMDD>`<20190101]
+names(hsx) <- c("TICKER","DATE","PRICE","VOLUME")
+hsx[,DATE:=as.Date(as.character(DATE),"%Y%m%d")]
+tickers <- sort(unique(hsx[,TICKER]))
+
+cophieu <- list()
+for(id in tickers) {
+  cophieu[[id]] <- hsx[TICKER==id]
+  setkey(cophieu[[id]],DATE)
+}
+
+list_day <- cophieu[["^VNINDEX"]][,DATE]
+days_seq <- c()
+weeks_seq <- c()
+mondays = seq(from=as.Date("2008-12-30"),to=as.Date("2018-12-31"),by=7)
+i <- 0
+for (monday in as.list(mondays))
+{
+  tuan <- seq(from=monday,to=monday+6, by=1)
+  if (any(tuan %in% list_day)) {
+    days_seq <- append(days_seq,tuan)
+    weeks_seq <- append(weeks_seq,rep(i,7))
+    i<- i+1
+  }
+}
+bang_tuan <-data.table(DATE=days_seq,WEEK=weeks_seq)
+for(id in tickers) {
+  cophieu[[id]] <- merge(cophieu[[id]][,YEAR:=year(DATE)],bang_tuan,by="DATE")
+}
+
+for(id in tickers) {
+  temp <- cophieu[[id]][,length(unique(.SD$WEEK)),by=YEAR]
+  if (!2016 %in% temp$YEAR){
+    cophieu[[id]] <- NULL
+  } else {
+    cophieu[[id]] <- cophieu[[id]][(YEAR%in% temp[V1>=30,YEAR])] #Remove firm-year obs have less than 30 trading weeks 
+    if (last(cophieu[[id]]$YEAR)-first(cophieu[[id]]$YEAR)+1 != length(unique(cophieu[[id]]$YEAR))){
+      print(id) #Check if any firm have break year
+    }
+  }
+}
+
+tickers <- names(cophieu) #update list of stocks
+
+cophieu[["^VNINDEX"]] <- cophieu[["^VNINDEX"]][weekdays(DATE)=="Wednesday"][,WEEK:=seq_along(WEEK)-1]
+wedVN <- cophieu[["^VNINDEX"]]$DATE
+bang_tuan <- NULL #Update lai bang tuan
+bang_tuan <- data.table(DATE=wedVN,WEEK=seq_along(wedVN)-1)
+
+for(id in tickers[-1]){
+  cophieu[[id]][,WEEK:=NULL] #Remove previous Week
+  
+  temp <- cophieu[[id]][weekdays(DATE)=="Wednesday"] #Get all trading days are Wednesday
+  
+  listWed <- wedVN[which(wedVN>=first(cophieu[[id]]$DATE)&wedVN<=last(cophieu[[id]]$DATE))] #Firm's Weeks must be in Market's Weeks
+  listNonWed <- listWed[which(!listWed%in%temp$DATE)] #Check if Wednesday not in trading weeks
+  if(length(listNonWed)>0) {
+    for(i in seq_along(listNonWed)){
+      ngay <- listNonWed[i]
+      while(!ngay%in%cophieu[[id]]$DATE) {ngay <- ngay-1} #Select previous day
+      rowNgay <- cophieu[[id]][DATE==ngay] #get infomation from previous day
+      rowNgay$DATE <- listNonWed[i] #Change Date to Wednesday
+      rowNgay$VOLUME <-0 #Change Volume to 0
+      temp<-rbind(temp,rowNgay) #Add to table
+    }
+  }
+  setkey(temp,DATE) #sort by DATE
+  cophieu[[id]] <-merge(temp,bang_tuan,by="DATE") #assign temp to cophieu[[id]]
+}
+
+for(id in tickers){
+  setkey(cophieu[[id]],WEEK)
+  tuan <- cophieu[[id]][,WEEK]
+  dau  <- first(tuan)
+  cuoi <- last(tuan)
+  #if (cuoi-dau+1 != nrow(cophieu[[id]])){
+    tuan_thieu <- seq(dau,cuoi)[!seq(dau,cuoi)%in%tuan] #Check if week is missing
+    if (length(tuan_thieu)>0){
+    print(id)
+    print(tuan_thieu)
+    cophieu[[id]] <- NULL #remove firm
+    }
+  #}
+}
+
+tickers <- names(cophieu)
+
+R <- list()
+for (id in tickers) {
+  n <- nrow(cophieu[[id]])
+  R[[id]] <- log(cophieu[[id]]$PRICE[2:n])-log(cophieu[[id]]$PRICE[1:n-1])
+  cophieu[[id]] <- cophieu[[id]][-1][,R:=R[[id]]]
+}
+for (id in tickers) {
+  if(any(is.infinite(cophieu[[id]][,R]))){print(id)}
+}
+
+for(id in tickers[-1]) {
+  cophieu[[id]] <- cophieu[[id]][WEEK > 1 & WEEK < 500]
+}
+tickers <- names(cophieu)
+banghoiquy <- list()
+for (id in tickers[-1]) {
+  Rw <- cophieu[[id]][,R]
+  dau <- first(cophieu[[id]][,WEEK])
+  cuoi <- last(cophieu[[id]][,WEEK])
+  # Rmw_2 <- cophieu[["^VNINDEX"]][(dau-2):(cuoi-2)][,R]
+  Rmw_1 <- cophieu[["^VNINDEX"]][(dau-1):(cuoi-1)][,R]
+  Rmw <- cophieu[["^VNINDEX"]][dau:cuoi][,R]
+  Rmw1 <- cophieu[["^VNINDEX"]][(dau+1):(cuoi+1)][,R]
+  # Rmw2 <- cophieu[["^VNINDEX"]][(dau+2):(cuoi+2)][,R]
+  banghoiquy[[id]] <-data.table(TICKER=id,WEEK=cophieu[[id]][,WEEK],YEAR=cophieu[[id]][,YEAR],Rw,Rmw_1,Rmw,Rmw1)
+  hoiquy <- lm(Rw~Rmw_1+Rmw+Rmw1,banghoiquy[[id]])
+  banghoiquy[[id]][,res:=residuals(hoiquy)]
+}
+
+for (id in tickers[-1]) {
+  banghoiquy[[id]][,W:=log(res+1)]
+}
+
+cal_NCSKEW <- function(W) {
+  n <- length(W)
+  return(-1*(n*(n-1)^(3/2)*sum(W^3))/((n-1)*(n-2)*((sum(W^2))^(3/2))))
+}
+
+cal_DUVOL <- function(W) {
+  trungbinh <- mean(W)
+  DownW <- W[which(W<trungbinh)]
+  nd <- length(DownW)
+  UpW <- W[which(W>trungbinh)]
+  nu <- length(UpW)
+  return(log(((nu-1)*sum(DownW^2))/((nd-1)*sum(UpW^2))))
+}
+
+CRASHRISK <- list()
+for(id in tickers[-1]) {
+  CRASHRISK[[id]] <- banghoiquy[[id]][,.(NCSKEW=as.numeric(lapply(.SD,cal_NCSKEW)),
+                                      DUVOL=as.numeric(lapply(.SD,cal_DUVOL)),
+                                      SIGMA=as.numeric(lapply(.SD,sd))),
+                                      by=.(YEAR,TICKER),
+                                      .SDcols="W"]
+  CRASHRISK[[id]][,RETURN:=cophieu[[id]][,mean(R),by=YEAR]$V1]
+  setkey(CRASHRISK[[id]],YEAR)
+  temp <- CRASHRISK[[id]][-nrow(CRASHRISK[[id]])]
+  temp[,NCSKEWT:=CRASHRISK[[id]]$NCSKEW[2:nrow(CRASHRISK[[id]])]]
+  temp[,DUVOLT:=CRASHRISK[[id]]$DUVOL[2:nrow(CRASHRISK[[id]])]]
+  CRASHRISK[[id]] <- temp
+}
+
+
+tonghop <- rbindlist(CRASHRISK)
+
+fwrite(tonghop,"crashrisk.csv")
+
+dturn <- hsx[,sum(VOLUME),by=.(TICKER,year(DATE))]
+names(dturn) <- c("TICKER","YEAR","TOTAL")
+shares <- fread("outstandingshares.csv")
+dturn  <- merge(dturn,shares,by=c("TICKER","YEAR"))
+dturn <- dturn[complete.cases(dturn)]
+dturn[,DTURN:=TOTAL/(SHARES)]
+dturn  <- dturn[TICKER %in% tickers]
+
+dturnover <- list()
+for(id in sort(unique(dturn[,TICKER]))) {
+  temp<- dturn[TICKER==id][,DTURN]
+  dturnover[[id]] <- dturn[TICKER==id][-length(temp)][,DTURN:=temp[-1]-temp[-length(temp)]]
+}
+ketqua <- rbindlist(dturnover)
+
+fwrite(ketqua,"dturn.csv")

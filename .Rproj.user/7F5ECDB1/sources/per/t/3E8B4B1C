@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1586938687590.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "3E8B4B1C",
+    "lastKnownWriteTime" : 2797492108776,
+    "last_content_update" : 1586938687590,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "B9FE1295",
+        "caption" : "dulieu",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=dulieu&cache_key=B9FE1295",
+        "displayedObservations" : 1410,
+        "environment" : "",
+        "expression" : "dulieu",
+        "object" : "dulieu",
+        "preview" : 0,
+        "totalObservations" : 1410,
+        "variables" : 21
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

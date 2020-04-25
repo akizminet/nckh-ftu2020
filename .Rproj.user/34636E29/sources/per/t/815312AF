@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1584686673148.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "815312AF",
+    "lastKnownWriteTime" : 2075550589592,
+    "last_content_update" : 1584686673148,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "id" : "ee8488ba54744cc4943ae62ff0a4a6ed",
+        "name" : "banghoiquy",
+        "title" : "banghoiquy"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "object_explorer"
+}

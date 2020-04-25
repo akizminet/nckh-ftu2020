@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1585985127007.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3205966185",
+    "id" : "972521AB",
+    "lastKnownWriteTime" : 1587032616,
+    "last_content_update" : 1587032616867,
+    "path" : "D:/projects/nckh/model.R",
+    "project_path" : "model.R",
+    "properties" : {
+        "cursorPosition" : "165,0",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

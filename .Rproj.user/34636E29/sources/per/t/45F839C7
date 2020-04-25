@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1584686761826.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "45F839C7",
+    "lastKnownWriteTime" : 1584686663,
+    "last_content_update" : 1584686761826,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "id" : "34a4a113079d47f7b8e06cc2be273ec8",
+        "name" : "cophieu",
+        "title" : "cophieu"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "object_explorer"
+}

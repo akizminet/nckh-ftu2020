@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1584686750900.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "3FDD3A39",
+    "lastKnownWriteTime" : 4047968968095440957,
+    "last_content_update" : 1584686750900,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "368427FD",
+        "caption" : "banghoiquy[[\"AAA\"]]",
+        "contentUrl" : "grid_resource/gridviewer.html?env=_rs_no_env&obj=&cache_key=368427FD",
+        "displayedObservations" : 398,
+        "environment" : "_rs_no_env",
+        "expression" : "banghoiquy[[\"AAA\"]]",
+        "object" : "",
+        "preview" : 0,
+        "totalObservations" : 398,
+        "variables" : 9
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

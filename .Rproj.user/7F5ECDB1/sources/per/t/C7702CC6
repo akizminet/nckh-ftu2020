@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1585985137293.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2880456431",
+    "id" : "C7702CC6",
+    "lastKnownWriteTime" : 1586938852,
+    "last_content_update" : 1586938852451,
+    "path" : "D:/projects/nckh/chayhoiquy.R",
+    "project_path" : "chayhoiquy.R",
+    "properties" : {
+        "cursorPosition" : "1,13",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

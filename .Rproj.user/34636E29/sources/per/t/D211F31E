@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1584686794047.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "D211F31E",
+    "lastKnownWriteTime" : 2075550589592,
+    "last_content_update" : 1584686794047,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "D28E6B73",
+        "caption" : "cophieu[[\"AAA\"]]",
+        "contentUrl" : "grid_resource/gridviewer.html?env=_rs_no_env&obj=&cache_key=D28E6B73",
+        "displayedObservations" : 398,
+        "environment" : "_rs_no_env",
+        "expression" : "cophieu[[\"AAA\"]]",
+        "object" : "",
+        "preview" : 0,
+        "totalObservations" : 398,
+        "variables" : 7
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

@@ -1,0 +1,10 @@
+library(dplyr)
+dulieu <- read.csv("amibroker_all_data.csv")
+san <- read.csv("nckh.csv",encoding = "UTF-8")
+hsx <- filter(san,X.1=="HOSE")
+tickers <- unique(sort(as.character(hsx$X)))
+hsx_price <-filter(dulieu,X.Ticker.%in%tickers & X.DTYYYYMMDD.>20090000)
+tickers2<-unique(as.character(hsx_price$X.Ticker.))
+tickers[which(!tickers%in%tickers2)]
+write.csv(hsx_price,"hsx.csv")
+names(hsx_price) <- c("Ticker","Date","Open","High","Low","Close","Volume")

@@ -1,0 +1,36 @@
+library(data.table)
+library(MASS)
+library(robustbase)
+crash <- fread("crashrisk.csv")
+co <- fread("nckh.csv",drop=c(1,2,4,5,7,10,13,16))
+loan <- fread("dulieuCT.csv",select=c(1,2,13,14,15,16))
+ykien <- fread("NCKH2020.csv",encoding = "UTF-8",select = c(1,2,7))
+dturn <- fread("dturn.csv",drop=c(3,4))
+dulieu <- merge(crash,loan,by=c("TICKER","YEAR"),all.x=TRUE)
+dulieu <- merge(dulieu,dturn,by=c("TICKER","YEAR"),all.x=TRUE)
+dulieu <- merge(dulieu,co,by=c("TICKER","YEAR"),all.x=TRUE)
+dulieu <- merge(dulieu,ykien,by=c("TICKER","YEAR"),all.x=TRUE)
+dulieu<-dulieu[BOARD_SIZE !="." & DUAL!="."&OWN_MNG!="."&OWN_STATE!="."&OWN_FR!="."&BIG4!="."]
+conYkien <- function(x) {
+  ifelse(grepl("Chấp nhận toàn phần",x),1,0)
+}
+gach <- function(x){
+  ifelse(grepl("-",x),0,as.numeric(x))
+}
+khong1 <-function(x) {
+  ifelse(x==0,0,1)
+}
+dulieu[,AO:=conYkien(AO)]
+dulieu[,`:=`(BOARD_SIZE=gach(BOARD_SIZE),
+             IND=gach(IND),
+             DUAL=gach(DUAL),
+             OWN_MNG=gach(OWN_MNG),
+             OWN_STATE=gach(OWN_STATE),
+             OWN_FR=gach(OWN_FR),
+             BIG4=gach(BIG4))]
+dulieu <- dulieu[complete.cases(dulieu)]
+dulieu <- dulieu[MARKET_VALUE !=0]
+modelNCSKEW <- lm(NCSKEWT~OWN_STATE+OWN_FR+OWN_MNG+BOARD_SIZE+IND+DUAL+BIG4+AO+log(MARKET_VALUE)+MB+DA+ROE+NCSKEW+SIGMA+DTURN+RETURN,dulieu)
+modelDUVOL <- lm(DUVOLT~OWN_STATE+OWN_FR+OWN_MNG+BOARD_SIZE+IND+DUAL+BIG4+AO+log(MARKET_VALUE)+MB+DA+ROE+NCSKEW+SIGMA+DTURN+RETURN,dulieu)
+summary(modelNCSKEW)
+summary(modelDUVOL)
